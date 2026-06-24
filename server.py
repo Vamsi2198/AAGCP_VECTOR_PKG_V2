@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import os
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from urllib.parse import urlparse
@@ -131,8 +132,9 @@ class DemoHandler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    server_address = ("127.0.0.1", 8000)
-    print(f"Starting AAGCP Vector UI server at http://{server_address[0]}:{server_address[1]}")
+    port = int(os.environ.get("PORT", 8000))
+    server_address = ("0.0.0.0", port)
+    print(f"Starting AAGCP Vector UI server at http://0.0.0.0:{port}")
     print("Open the browser and click buttons to exercise the demo endpoints.")
     httpd = HTTPServer(server_address, DemoHandler)
     httpd.serve_forever()
