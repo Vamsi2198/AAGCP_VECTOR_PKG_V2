@@ -1,0 +1,33 @@
+version: "2026.06.12"
+
+# Role semantics deliberately mirror AAGCP's Snowflake role model so a
+# single policy document can drive both enforcement points: column-level
+# masking policies AND retrieval-time rehydration in vector space.
+
+roles:
+  ADMIN:
+    reveal: [ALL]
+  DATA_STEWARD:
+    reveal: [ALL]
+  COMPLIANCE_OFFICER:
+    reveal: [PERSON, AADHAAR, PAN, IN_PHONE, EMAIL, MRN]
+  HR_ROLE:
+    reveal: [PERSON, EMAIL]
+    partial:
+      IN_PHONE: last4
+  ANALYST_ROLE:
+    reveal: []          # fully de-identified analytics view
+    partial:
+      IN_PHONE: last4
+      AADHAAR: last4
+  PUBLIC:
+    reveal: []
+
+collections:
+  health_records:
+    pii_embedding: deny_raw      # raw PII may NEVER enter vector space
+    block_query_roles: [PUBLIC]
+
+erasure:
+  method: crypto_shred
+  certificate: true

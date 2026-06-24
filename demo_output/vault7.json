@@ -1,0 +1,50 @@
+{
+  "store": {
+    "<MRN_f7ff6b4fe6e96a57>": {
+      "type": "MRN",
+      "value": "MRN-100234",
+      "identities": [
+        "c0aab35508ce"
+      ]
+    },
+    "<IN_PHONE_135c6bd588a17299>": {
+      "type": "IN_PHONE",
+      "value": "+91 9845067895",
+      "identities": [
+        "c0aab35508ce"
+      ]
+    },
+    "<AADHAAR_5c57fb1f98cb9160>": {
+      "type": "AADHAAR",
+      "value": "4521 8834 6723",
+      "identities": [
+        "c0aab35508ce"
+      ]
+    },
+    "<PERSON_458a03b6fe4e6949>": {
+      "type": "PERSON",
+      "value": "Dinesh Iyer",
+      "identities": [
+        "c0aab35508ce"
+      ]
+    }
+  },
+  "identities": {
+    "c0aab35508ce": [
+      "<AADHAAR_5c57fb1f98cb9160>",
+      "<IN_PHONE_135c6bd588a17299>",
+      "<MRN_f7ff6b4fe6e96a57>",
+      "<PERSON_458a03b6fe4e6949>"
+    ]
+  },
+  "idnames": {
+    "c0aab35508ce": [
+      "Dinesh Iyer"
+    ]
+  },
+  "shredded": [
+    "<AADHAAR_6d92a7facb34846e>",
+    "<IN_PHONE_790ae95c098486ac>",
+    "<PERSON_43993b71ec50d1a7>"
+  ]
+}
