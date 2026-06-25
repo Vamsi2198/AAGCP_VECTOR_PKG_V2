@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<title>AAGCP-Vector — Governance Console</title>
+<style>
+  :root{
+    --bg:#0c1118; --panel:#121a24; --panel2:#0f161f; --line:#1f2b38;
+    --ink:#e6edf3; --dim:#8595a6; --mute:#5d6b7a;
+    --safe:#37d39a;       /* governed / masked / OK */
+    --amber:#e8b339;      /* conflict / erased / risk */
+    --accent:#5b8cff;     /* action */
+    --mono:'SFMono-Regular',ui-monospace,'JetBrains Mono',Menlo,Consolas,monospace;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+       -webkit-font-smoothing:antialiased;line-height:1.45}
+  header{padding:18px 16px 12px;border-bottom:1px solid var(--line);
+         position:sticky;top:0;background:linear-gradient(180deg,#0c1118,#0c1118f2);z-index:5}
+  h1{margin:0;font-size:18px;letter-spacing:.3px;font-weight:650}
+  h1 .v{color:var(--safe)}
+  .sub{color:var(--dim);font-size:12.5px;margin-top:3px}
+  .wrap{padding:14px 14px 60px;max-width:760px;margin:0 auto}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+        padding:14px;margin-bottom:14px}
+  .card h2{margin:0 0 4px;font-size:13px;text-transform:uppercase;letter-spacing:.12em;
+           color:var(--dim);font-weight:600}
+  .hint{color:var(--mute);font-size:12px;margin:0 0 10px}
+  label{display:block;font-size:12px;color:var(--dim);margin:8px 0 4px}
+  input,textarea,select{width:100%;background:var(--panel2);border:1px solid var(--line);
+        color:var(--ink);border-radius:9px;padding:10px 11px;font-size:14px;font-family:var(--sans)}
+  textarea{font-family:var(--mono);font-size:12.5px;min-height:84px;resize:vertical}
+  .row{display:flex;gap:8px}.row>*{flex:1}
+  button{appearance:none;border:0;border-radius:9px;padding:11px 12px;font-size:13.5px;
+         font-weight:600;color:#08121e;background:var(--accent);cursor:pointer}
+  button.ghost{background:#1a2735;color:var(--ink);border:1px solid var(--line)}
+  button.safe{background:var(--safe)}button.amber{background:var(--amber)}
+  button:active{transform:translateY(1px)}
+  .btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .btnrow button{flex:1 1 auto;min-width:46%}
+  .flowbar{display:flex;flex-wrap:wrap;gap:8px}
+  .flowbar button{flex:1 1 auto;min-width:30%;font-size:12.5px}
+  .verdict{border-radius:10px;padding:11px 13px;margin:0 0 12px;font-size:13px;
+           font-family:var(--mono);border:1px solid var(--line);background:var(--panel2);
+           color:var(--dim);display:flex;gap:9px;align-items:center}
+  .verdict .dot{width:9px;height:9px;border-radius:50%;background:var(--mute);flex:none}
+  .verdict.ok{border-color:#1d4d3c;color:var(--safe)}
+  .verdict.ok .dot{background:var(--safe);box-shadow:0 0 8px var(--safe)}
+  .verdict.warn{border-color:#5a4516;color:var(--amber)}
+  .verdict.warn .dot{background:var(--amber);box-shadow:0 0 8px var(--amber)}
+  pre{background:#070b10;border:1px solid var(--line);border-radius:10px;padding:12px;
+      font-family:var(--mono);font-size:12px;white-space:pre-wrap;word-break:break-word;
+      margin:0;max-height:62vh;overflow:auto;color:#cdd9e5}
+  pre .tok{color:var(--safe)}
+  pre .erased{color:var(--amber);font-weight:600}
+  pre .k{color:var(--accent)}
+  .pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 6px;
+        border-radius:5px;border:1px solid var(--line);color:var(--dim);margin-left:6px}
+</style>
+</head>
+<body>
+<header>
+  <h1>AAGCP-<span class="v">Vector</span> — Governance Console</h1>
+  <div class="sub">PII governed before embedding · role-gated rehydration · crypto-shred erasure</div>
+</header>
+
+<div class="wrap">
+
+  <div id="verdict" class="verdict"><span class="dot"></span><span id="vtext">Ready. Reset &amp; seed to begin.</span></div>
+
+  <div class="card">
+    <h2>Guided flow</h2>
+    <p class="hint">Each step fills the inputs below, then runs — so you can see the input that produced every output. Nothing is canned.</p>
+    <div class="flowbar">
+      <button class="ghost" onclick="seed()">1 · Reset &amp; seed</button>
+      <button class="ghost" onclick="flowQuery('ANALYST_ROLE')">2 · Query as analyst</button>
+      <button class="ghost" onclick="flowQuery('COMPLIANCE_OFFICER')">3 · Query as compliance</button>
+      <button class="ghost" onclick="flowErase()">4 · Erase Ramesh Iyer</button>
+      <button class="ghost" onclick="flowQuery('COMPLIANCE_OFFICER')">5 · Re-query (erased)</button>
+      <button class="ghost" onclick="audit()">6 · Audit</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Query <span class="pill">role decides what is revealed</span></h2>
+    <label>Role</label>
+    <select id="q_role">
+      <option>ANALYST_ROLE</option>
+      <option>HR_ROLE</option>
+      <option>COMPLIANCE_OFFICER</option>
+      <option>DATA_STEWARD</option>
+      <option>ADMIN</option>
+      <option>PUBLIC</option>
+    </select>
+    <label>Query text</label>
+    <input id="q_text" value="patients diagnosed with type 2 diabetes"/>
+    <div class="btnrow"><button onclick="runQuery()">Run query</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Erase — GDPR / DPDP right to erasure</h2>
+    <label>Subject name (exact)</label>
+    <input id="e_subject" value="Ramesh Iyer"/>
+    <div class="btnrow"><button class="amber" onclick="runErase()">Crypto-shred subject</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Ingest your own document <span class="pill">add data &amp; verify</span></h2>
+    <p class="hint">Paste any record with PII. Add names to the lexicon so people are caught.</p>
+    <label>Document ID</label>
+    <input id="i_id" value="user_doc_1"/>
+    <label>Text</label>
+    <textarea id="i_text">Patient Meera Nair, Aadhaar 6677 8899 1122, phone +91 9900112233, MRN-200500, diagnosed with hypertension. Dr. Anil Kumar advised low-sodium diet.</textarea>
+    <label>Person lexicon (comma-separated)</label>
+    <input id="i_lex" value="Meera Nair, Anil Kumar"/>
+    <div class="btnrow"><button class="safe" onclick="runIngest()">Govern &amp; ingest</button></div>
+  </div>
+
+  <div class="card">
+    <h2>Natural-language command <span class="pill">same grammar as Snowflake plane</span></h2>
+    <label>Command</label>
+    <input id="nl_cmd" value="mask pii in health_records for analyst roles"/>
+    <div class="btnrow">
+      <button onclick="runNL()">Run command</button>
+      <button class="ghost" onclick="document.getElementById('nl_cmd').value='as COMPLIANCE_OFFICER: patients with diabetes';">ex: query</button>
+      <button class="ghost" onclick="document.getElementById('nl_cmd').value='verify audit';">ex: audit</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Output</h2>
+    <pre id="out">Click <b>1 · Reset &amp; seed</b> to start.</pre>
+  </div>
+</div>
+
+<script>
+const API = ""; // same origin
+const $ = id => document.getElementById(id);
+
+function setVerdict(text, kind){ // kind: '', 'ok', 'warn'
+  const v = $("verdict"); v.className = "verdict" + (kind ? " "+kind : "");
+  $("vtext").textContent = text;
+}
+function colorize(s){
+  return s
+    .replace(/\[ERASED-GDPR\]/g,'<span class="erased">[ERASED-GDPR]</span>')
+    .replace(/(&lt;[A-Z_]+_[0-9a-f]+&gt;)/g,'<span class="tok">$1</span>');
+}
+function show(obj){
+  let s = (typeof obj === "string") ? obj : JSON.stringify(obj, null, 2);
+  s = s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  $("out").innerHTML = colorize(s);
+  $("out").scrollTop = 0;
+}
+async function call(path, method, body){
+  try{
+    const r = await fetch(API+path, {method,
+      headers:{'Content-Type':'application/json'},
+      body: body ? JSON.stringify(body) : undefined});
+    return await r.json();
+  }catch(e){ return {error:"network", detail:String(e)}; }
+}
+
+async function seed(){
+  setVerdict("Seeding fresh database…","");
+  const r = await call("/reset","POST",{});
+  setVerdict(r.message || "Seeded.","ok"); show(r);
+}
+async function runQuery(){
+  const role=$("q_role").value, q=$("q_text").value;
+  setVerdict("Querying as "+role+"…","");
+  const r = await call("/query","POST",{role, query:q, top_k:3});
+  if(r.permitted===false){ setVerdict("Denied: "+r.reason,"warn"); return show(r); }
+  const erased = JSON.stringify(r).includes("ERASED-GDPR");
+  setVerdict(role+": "+(r.results?r.results.length:0)+" results"+
+             (erased?" · contains erased subject":" · rehydrated per role"),
+             erased?"warn":"ok");
+  show(r);
+}
+function flowQuery(role){ $("q_role").value=role; runQuery(); }
+async function runErase(){
+  const s=$("e_subject").value;
+  setVerdict("Crypto-shredding "+s+"…","");
+  const r = await call("/erase","POST",{subject:s});
+  if(r.executed){
+    setVerdict("Erased "+s+" · "+r.tokens_shredded.length+" tokens destroyed · "+
+               (r.tokens_retained_shared?r.tokens_retained_shared.length:0)+
+               " retained (shared) · 0 vectors touched","warn");
+  }else{
+    setVerdict(r.message||"Erase not executed","warn");
+  }
+  show(r);
+}
+function flowErase(){ $("e_subject").value="Ramesh Iyer"; runErase(); }
+async function runIngest(){
+  setVerdict("Governing &amp; ingesting document…","");
+  const r = await call("/ingest","POST",
+    {doc_id:$("i_id").value, text:$("i_text").value, lexicon:$("i_lex").value});
+  if(r.success){
+    const sim=r.simulate||{};
+    setVerdict("Ingested "+r.doc_id+" · "+r.pii_detected+" PII masked · leaks raw="+
+               sim.leaks_raw+" masked="+sim.leaks_masked+
+               (r.conflicts&&r.conflicts.length?" · "+r.conflicts.length+" conflict(s)":""),
+               (sim.leaks_masked===0)?"ok":"warn");
+  }else setVerdict(r.message||"Ingest failed","warn");
+  show(r);
+}
+async function runNL(){
+  const c=$("nl_cmd").value;
+  setVerdict("Running: "+c,"");
+  const r = await call("/nl","POST",{command:c});
+  setVerdict(r.message||"Done", r.executed===false?"warn":"ok");
+  show(r);
+}
+async function audit(){
+  setVerdict("Verifying audit chain…","");
+  const r = await call("/audit","GET");
+  setVerdict("Audit chain valid: "+r.audit_valid+" · policy "+r.policy_version,
+             r.audit_valid?"ok":"warn");
+  show(r);
+}
+</script>
+</body>
+</html>

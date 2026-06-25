@@ -172,8 +172,7 @@ log("  PII never enters vector space; retrieval semantics survive;")
 log("  role policy decides what comes back out; erasure is a key deletion.")
 
 (OUT / "run_report.md").write_text(
-    "# AAGCP-Vector — Demo Run Report\n" + "\n".join(REPORT),
-    encoding="utf-8")
+    "# AAGCP-Vector — Demo Run Report\n" + "\n".join(REPORT))
 print(f"\nReport written to {OUT/'run_report.md'}")
 
 # ── ACT 6: Natural-language governance — same grammar, two substrates ──

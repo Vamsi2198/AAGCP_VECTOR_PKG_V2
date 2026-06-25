@@ -58,10 +58,10 @@ Traditional answer: find every vector, delete, re-embed redacted
 versions, pray the model hasn't changed. AAGCP answer: delete the
 vault keys. Every vector referencing him is instantly anonymized.
 
-  Certificate ID : ae39f1fd-99eb-4d22-8a70-3b4a52079635
+  Certificate ID : 27337c47-32ac-4802-a21c-7afbea7c048a
   Tokens shredded: 4
   Vectors re-embedded: 0  |  deleted: 0
-  Audit hash     : 42309f7d559f4b1c...
+  Audit hash     : eb113890535071dc...
 
   Same query as ADMIN (highest privilege) AFTER erasure:
     [rec_002] Patient Priya Sharma, PAN ABCDE1234F, email priya.sharma@gmail.com, MRN-100871, diagnosed with Type 2 Diabetes with early nephropathy. Dr. A...

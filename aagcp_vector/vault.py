@@ -131,11 +131,10 @@ class PseudonymVault:
                       for k, v in self._store.items()},
             "identities": {k: sorted(v) for k, v in self._identities.items()},
             "idnames": {k: sorted(v) for k, v in self._idnames.items()},
-            "shredded": self._shredded}, indent=2),
-            encoding="utf-8")
+            "shredded": self._shredded}, indent=2))
 
     def _load(self):
-        d = json.loads(self.path.read_text(encoding="utf-8"))
+        d = json.loads(self.path.read_text())
         self._store = {k: {**v, "identities": set(v.get("identities", []))}
                        for k, v in d.get("store", {}).items()}
         self._identities = {k: set(v) for k, v in d.get("identities", {}).items()}
